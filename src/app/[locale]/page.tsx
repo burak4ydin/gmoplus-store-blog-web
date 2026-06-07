@@ -43,9 +43,9 @@ export default async function HomePage({
   }
 
   // Split posts: first = featured, rest = grid
-  const featured = posts[0] || null;
-  const gridPosts = posts.slice(1, 10);
-  const morePosts = posts.slice(10);
+  const featured = posts.find((p) => p.coverImageUrl) || null;
+  const gridPosts = posts.filter((p) => p !== featured).slice(0, 9);
+  const morePosts = posts.filter((p) => p !== featured).slice(9);
 
   // Deduplicate popular from grid
   const gridIds = new Set(gridPosts.map((p) => p.id));
