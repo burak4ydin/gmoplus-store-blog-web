@@ -59,6 +59,7 @@ export interface Article {
   sponsorName: string | null;
   sponsorUrl: string | null;
   readCount: number;
+  viewCount?: number | null;
   author: BlogAuthor;
   category: Pick<BlogCategory, 'id' | 'name' | 'slug' | 'icon'> | null;
   tags: ArticleTag[];
