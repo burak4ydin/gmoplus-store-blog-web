@@ -10,7 +10,7 @@ import type { Article } from '@/types/blog';
 
 export const revalidate = 60;
 
-const VERTICAL = 'auto';
+const VERTICAL = 'store';
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://auto-blog.gmoplus.com';
 
 export default async function HomePage({
