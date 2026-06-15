@@ -20,6 +20,6 @@ COPY --from=builder /app/.next/static ./.next/static
 COPY --from=builder /app/public ./public
 RUN chown -R appuser:appgroup /app
 USER appuser
-ENV PORT=3013
-EXPOSE 3013
+ENV PORT=3000
+EXPOSE 3000
 CMD ["node", "server.js"]
