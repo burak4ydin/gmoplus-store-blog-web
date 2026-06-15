@@ -1,69 +1,27 @@
-import type { Metadata } from 'next';
-
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://blog.gmoplus.com';
-const SITE_NAME = 'GMOPlus Blog';
-
-export function generatePostMetadata(post: {
-  title: string;
-  seoTitle?: string | null;
-  seoDescription?: string | null;
-  excerpt?: string | null;
-  slug: string;
-  canonicalUrl?: string | null;
-  ogImageUrl?: string | null;
-  coverImageUrl?: string | null;
-  publishedAt?: string | null;
-  author?: { displayName?: string | null };
-}): Metadata {
-  const title = post.seoTitle || post.title || 'Untitled';
-  const description = post.seoDescription || post.excerpt || '';
-  const url = post.canonicalUrl || `${SITE_URL}/${post.slug}`;
-  const image = post.ogImageUrl || post.coverImageUrl;
-
+export function buildArticleJsonLd(post: any, locale: string, siteUrl: string, siteName: string) {
   return {
-    title,
-    description,
-    alternates: { canonical: url },
-    openGraph: {
-      title,
-      description,
-      url,
-      siteName: SITE_NAME,
-      type: 'article',
-      publishedTime: post.publishedAt || undefined,
-      authors: post.author?.displayName ? [post.author.displayName] : undefined,
-      ...(image && { images: [{ url: image, width: 1200, height: 630 }] }),
-    },
-    twitter: {
-      card: 'summary_large_image',
-      title,
-      description,
-      ...(image && { images: [image] }),
-    },
+    '@context': 'https://schema.org',
+    '@type': 'BlogPosting',
+    headline: post.title,
+    description: post.excerpt || post.seoDescription || '',
+    image: post.coverImageUrl || '',
+    datePublished: post.publishedAt,
+    dateModified: post.updatedAt || post.publishedAt,
+    inLanguage: locale,
+    url: `${siteUrl}/${locale}/${post.slug}`,
+    author: { '@type': 'Person', name: post.author?.displayName || 'GMOPlus' },
+    publisher: { '@type': 'Organization', name: siteName, url: siteUrl },
+    mainEntityOfPage: { '@type': 'WebPage', '@id': `${siteUrl}/${locale}/${post.slug}` },
+    keywords: (post.seoKeywords || []).join(', '),
   };
 }
 
-export function generateCategoryMetadata(category: {
-  name: string;
-  slug: string;
-}): Metadata {
-  const title = `${category.name} — ${SITE_NAME}`;
-  const description = `Read the latest ${category.name} articles on ${SITE_NAME}`;
-
+export function buildBreadcrumbJsonLd(items: { name: string; url: string }[]) {
   return {
-    title,
-    description,
-    alternates: { canonical: `${SITE_URL}/category/${category.slug}` },
-    openGraph: { title, description, url: `${SITE_URL}/category/${category.slug}`, siteName: SITE_NAME },
-  };
-}
-
-export function generateTagMetadata(tag: { name: string; slug: string }): Metadata {
-  const title = `Posts tagged "${tag.name}" — ${SITE_NAME}`;
-
-  return {
-    title,
-    description: `Browse all articles tagged with ${tag.name}`,
-    alternates: { canonical: `${SITE_URL}/tag/${tag.slug}` },
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: items.map((item, i) => ({
+      '@type': 'ListItem', position: i + 1, name: item.name, item: item.url,
+    })),
   };
 }

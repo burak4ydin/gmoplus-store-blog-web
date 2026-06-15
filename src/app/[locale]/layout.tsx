@@ -5,7 +5,6 @@ import { notFound } from 'next/navigation';
 import { routing } from '@/i18n/routing';
 import { BlogHeader } from '@/components/layout/BlogHeader';
 import { BlogFooter } from '@/components/layout/BlogFooter';
-import { getVerticalConfig } from '@/lib/vertical-config';
 
 const VERTICAL = 'store';
 
@@ -19,42 +18,18 @@ export async function generateMetadata({
   params: Promise<{ locale: string }>;
 }): Promise<Metadata> {
   const { locale } = await params;
-  const config = getVerticalConfig(VERTICAL);
-
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://blog.store.gmoplus.com';
   return {
-    metadataBase: new URL(
-      process.env.NEXT_PUBLIC_SITE_URL || 'https://store.gmoplus.com'
-    ),
-    title: {
-      default: `${config.name} — ${config.tagline}`,
-      template: `%s — ${config.name}`,
-    },
-    description: `Your trusted source for the latest ${config.tagline.toLowerCase()} on ${config.name}.`,
-    icons: {
-      icon: '/favicon.ico',
-      apple: '/logo.png',
-    },
-    openGraph: {
-      siteName: config.name,
-      locale: locale,
-      type: 'website',
-    },
-    twitter: {
-      card: 'summary_large_image',
-    },
-    robots: {
-      index: true,
-      follow: true,
-    },
+    metadataBase: new URL(siteUrl),
+    title: { default: 'GMOPlus Store Blog', template: '%s | GMOPlus Store Blog' },
+    description: 'Alisveris rehberleri ve urun incelemeleri',
     alternates: {
-      canonical: `${process.env.NEXT_PUBLIC_SITE_URL || 'https://store.gmoplus.com'}/${locale}`,
-      languages: Object.fromEntries(
-        routing.locales.map((l) => [
-          l,
-          `${process.env.NEXT_PUBLIC_SITE_URL || 'https://store.gmoplus.com'}/${l}`,
-        ])
-      ),
+      canonical: `${siteUrl}/${locale}`,
+      languages: Object.fromEntries(routing.locales.map((l) => [l, `${siteUrl}/${l}`])),
     },
+    openGraph: { siteName: 'GMOPlus Store Blog', locale, type: 'website' },
+    twitter: { card: 'summary_large_image' },
+    robots: { index: true, follow: true },
   };
 }
 
